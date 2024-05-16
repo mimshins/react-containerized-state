@@ -1,16 +1,16 @@
-# Contributing to "[dot]Helix: UI"
+# Contributing to "React Containerized State"
 
 If you're reading this, you're definitely awesome!
 
-The following is a set of guidelines for contributing to "[dot]Helix: UI", which is hosted in the [GitHub](https://github.com/dot-helix/dot-helix-ui). These are mostly guidelines, not rules. Use your best judgment, and feel free to propose changes to this document in a pull request.
+The following is a set of guidelines for contributing to "React Containerized State", which is hosted in the [GitHub](https://github.com/mimshins/react-containerized-state). These are mostly guidelines, not rules. Use your best judgment, and feel free to propose changes to this document in a pull request.
 
 ## Code of Conduct
 
-This project and everyone participating in it is governed by the [Code of Conduct](https://github.com/dot-helix/dot-helix-ui/blob/main/CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code.
+This project and everyone participating in it is governed by the [Code of Conduct](https://github.com/mimshins/react-containerized-state/blob/main/CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code.
 
 ## A large spectrum of contributions
 
-There are many ways to contribute to "[dot]Helix: UI", code contribution is one aspect of it. For instance, documentation improvements are as important as code changes.
+There are many ways to contribute to "React Containerized State", code contribution is one aspect of it. For instance, documentation improvements are as important as code changes.
 
 ## Your first Pull Request
 
@@ -18,7 +18,7 @@ Working on your first Pull Request? You can learn how from this free video serie
 
 [How to Contribute to an Open Source Project on GitHub](https://egghead.io/courses/how-to-contribute-to-an-open-source-project-on-github)
 
-To help you get your feet wet and get you familiar with our contribution process, we have a list of [good first issues](https://github.com/dot-helix/dot-helix-ui/issues?q=is:open+is:issue+label:"good+first+issue") that contain changes that have a relatively limited scope. This label means that there is already a working solution to the issue in the discussion section. Therefore, it is a great place to get started.
+To help you get your feet wet and get you familiar with our contribution process, we have a list of [good first issues](https://github.com/mimshins/react-containerized-state/issues?q=is:open+is:issue+label:"good+first+issue") that contain changes that have a relatively limited scope. This label means that there is already a working solution to the issue in the discussion section. Therefore, it is a great place to get started.
 
 You can also work on any other issue you choose to.
 The "good first" issues are just issues where we have a clear picture about their scope and timeline.
@@ -31,7 +31,7 @@ If there has been no activity on the issue for 7 to 14 days, it is safe to assum
 
 ## Sending a Pull Request
 
-"[dot]Helix: UI" is a community project, so Pull Requests are always welcome, but, before working on a large change, it is best to open an issue first to discuss it with the maintainers.
+"React Containerized State" is a community project, so Pull Requests are always welcome, but, before working on a large change, it is best to open an issue first to discuss it with the maintainers.
 
 When in doubt, keep your Pull Requests small. To give a Pull Request the best chance of getting accepted, don't bundle more than one feature or bug fix per Pull Request. It's often best to create two smaller Pull Requests than one big one.
 
@@ -40,9 +40,9 @@ When in doubt, keep your Pull Requests small. To give a Pull Request the best ch
 2. Clone the fork to your local machine and add upstream remote:
 
 ```sh
-git clone https://github.com/<your username>/dot-helix-ui.git
-cd dot-helix-ui
-git remote add upstream https://github.com/dot-helix/dot-helix-ui.git
+git clone https://github.com/<your username>/react-containerized-state.git
+cd react-containerized-state
+git remote add upstream https://github.com/mimshins/react-containerized-state.git
 ```
 
 3. Synchronize your local `main` branch with the upstream one:
@@ -61,7 +61,7 @@ pnpm install
 5. Create a new topic branch:
 
 ```sh
-git checkout -b my-topic-branch
+git switch -c my-topic-branch
 ```
 
 6. Make changes, commit and push to your fork:
@@ -70,20 +70,9 @@ git checkout -b my-topic-branch
 git push -u origin HEAD
 ```
 
-7. Go to [the repository](https://github.com/dot-helix/dot-helix-ui) and make a Pull Request.
+7. Go to [the repository](https://github.com/mimshins/react-containerized-state) and make a Pull Request.
 
 The core team is monitoring for Pull Requests. We will review your Pull Request and either merge it, request changes to it, or close it with an explanation.
-
-### Development server
-
-Start developing server and watch for code changes:
-
-```sh
-pnpm next:dev
-```
-
-The local dev server is a NextJS app.
-You can import codes and make changes to `/app/page.tsx` page.
 
 ### Building
 
