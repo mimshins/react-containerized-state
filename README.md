@@ -14,7 +14,7 @@ npm install react-containerized-state
 # Or via any other package manager
 ```
 
-## Usage
+## Basic usage
 
 Consider the following example:
 
@@ -82,6 +82,111 @@ setTimeout(() => {
 
 This way, after 2 seconds the value of `counter` container updates to `100` resulting a state dispatch which calls all the subscribers of the container (including those in the React components).
 
+## Usage with selectors
+
+There may be situations where you have to store a complex state in your container (**It is recommended to have different small containers instead of several large ones**). In these cases, you may not want to subscribe to all the fields of the complex state. Instead you want to subscribe to different parts in different components or modules.
+
+Consider the following example:
+
+```tsx
+import { createStateContainer } from "react-containerized-state";
+
+// You can move this container to a separate module and share it across your app
+const complexState = createStateContainer({ a: 1, b: "2" });
+
+const Controls = () => {
+  const updateState = complexState.useUpdateValue();
+
+  return (
+    <div>
+      <button
+        onClick={() => {
+          updateState(s => ({
+            ...s,
+            a: s.a + 1,
+          }));
+        }}
+      >
+        Update State.A
+      </button>
+      <button
+        onClick={() => {
+          updateState(s => ({
+            ...s,
+            b: String(Number(s.b) + 1),
+          }));
+        }}
+      >
+        Update State.B
+      </button>
+    </div>
+  );
+};
+
+const DisplayA = () => {
+  const a = complexState.useValueSelector(value => value.a);
+
+  return <div>State.A: {a}</div>;
+};
+
+const DisplayB = () => {
+  const b = complexState.useValueSelector(value => value.b);
+
+  return <div>State.B: {b}</div>;
+};
+
+const Container = () => {
+  return (
+    <div>
+      <h2>Container</h2>
+      <Controls />
+      <DisplayA />
+      <DisplayB />
+    </div>
+  );
+};
+
+const Page = () => {
+  return (
+    <main>
+      <Container />
+    </main>
+  );
+};
+
+export default Page;
+```
+
+In this example, when the user clicks on the buttons of the `Controls` component, the state changes and each component that is subscribed to a part of the container's state via `useValueSelector` hook will be notified and re-rendered as a result. In other words, `DisplayA` component re-renders only when `value.a` changes (same thing for the `DisplayB` component and the value of `value.b` state.).
+
+You can pass in any selector you want. Think of selectors as a state transformer where you can transform a complex state into another simpler shape.
+
+For example:
+
+```tsx
+const { a, b } = complexState.useValueSelector(value => ({ a: value.a, b: value.b}));
+
+const valueOfB = complexState.useValueSelector(value => value.b);
+```
+
+Cool, huh?
+
+So, what about using the complex state in a non-React environment?
+You can opt-in `selectedSubscribe` instead of `subscribe`.
+
+For example:
+
+```ts
+// Logs the new value of `value.a` on selected state changes
+complexState.selectedSubscribe(value => value.a, console.log);
+```
+
+## More control of re-rendering and emission changes?
+
+For more control over re-rendering (in React environment) and emission changes (in non-React environment) try to pass in `isEqual` parameter to the `useValueSelector` and `selectedSubscribe` (check the API section for more information).
+
+> By default, we are using `Object.is` as equality check function.
+
 ## API
 
 ### `createStateContainer`:
@@ -89,9 +194,24 @@ This way, after 2 seconds the value of `counter` container updates to `100` resu
 ```ts
 declare const createStateContainer: <T>(initializer: T | (() => T)) => {
   /**
-   * Subscribes to the container changes and returns the unsubscribe function.
+   * Subscribes to the changes of the container's state value
+   * and returns the unsubscribe function.
    */
   subscribe(subscribeCallback: (value: T) => void): () => void;
+  /**
+   * Subscribes to the changes of the container's selected state values
+   * and returns the unsubscribe function.
+   *
+   * For more control over emission changes, you may provide a custom equality function.
+   */
+  selectedSubscribe<P>(
+    selector: (value: T) => P,
+    subscribeCallback: (value: P) => void,
+    /**
+     * A custom equality function to control emission changes.
+     */
+    isEqual?: (a: P, b: P) => boolean,
+  ): () => void;
   /**
    * Gets the value of the state.
    *
@@ -106,9 +226,23 @@ declare const createStateContainer: <T>(initializer: T | (() => T)) => {
   /**
    * A React hook to read the value of the state.
    *
-   * This is a reactive function and will be updated on state change.
+   * This is a reactive function and updates on state value change.
    */
   useValue(): T;
+  /**
+   * A React hook to read the values of the selected states.
+   *
+   * This is a reactive function and updates on selected state values change.
+   *
+   * For more control over re-rendering, you may provide a custom equality function.
+   */
+  useValueSelector(
+    selector: (value: T) => P,
+    /**
+     * A custom equality function to control re-rendering.
+     */
+    isEqual?: (a: P, b: P) => boolean,
+  ): P;
   /**
    * A React hook to update the value of the state and notify the subscribers.
    */
