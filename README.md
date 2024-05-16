@@ -88,10 +88,30 @@ This way, after 2 seconds the value of `counter` container updates to `100` resu
 
 ```ts
 declare const createStateContainer: <T>(initializer: T | (() => T)) => {
+  /**
+   * Subscribes to the container changes and returns the unsubscribe function.
+   */
   subscribe(subscribeCallback: (value: T) => void): () => void;
+  /**
+   * Gets the value of the state.
+   *
+   * Please note that this function is not reactive!
+   * Avoid using this in the React's rendering phase.
+   */
   getValue(): T;
+  /**
+   * Updates the value of the state and notifies the subscribers.
+   */
   updateValue(newValue: T): void;
+  /**
+   * A React hook to read the value of the state.
+   *
+   * This is a reactive function and will be updated on state change.
+   */
   useValue(): T;
+  /**
+   * A React hook to update the value of the state and notify the subscribers.
+   */
   useUpdateValue(): React.Dispatch<React.SetStateAction<T>>;
 };
 ```

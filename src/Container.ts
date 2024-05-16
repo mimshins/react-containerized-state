@@ -23,6 +23,9 @@ class Container<T> {
     this._subscribers = new Set();
   }
 
+  /**
+   * Subscribes to the container changes and returns the unsubscribe function.
+   */
   public subscribe(subscribeCallback: SubscribeCallback<T>) {
     this._subscribers.add(subscribeCallback);
 
@@ -33,16 +36,30 @@ class Container<T> {
     return unsubscribe;
   }
 
+  /**
+   * Gets the value of the state.
+   *
+   * Please note that this function is not reactive!
+   * Avoid using this in the React's rendering phase.
+   */
   public getValue() {
     return this._value;
   }
 
+  /**
+   * Updates the value of the state and notifies the subscribers.
+   */
   public updateValue(newValue: T) {
     this._value = newValue;
 
     this._subscribers.forEach(subscriber => subscriber(newValue));
   }
 
+  /**
+   * A React hook to read the value of the state.
+   *
+   * This is a reactive function and will be updated on state change.
+   */
   public useValue() {
     const storeSubscribe = useLazyInitializedValue(() =>
       this.subscribe.bind(this),
@@ -63,6 +80,9 @@ class Container<T> {
     return snapshot;
   }
 
+  /**
+   * A React hook to update the value of the state and notify the subscribers.
+   */
   public useUpdateValue() {
     const updateValue = React.useCallback<
       React.Dispatch<React.SetStateAction<T>>
