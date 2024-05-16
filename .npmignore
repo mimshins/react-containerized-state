@@ -1,0 +1,15 @@
+.env
+.npmrc
+.gitignore
+.eslintrc
+.eslintignore
+.prettierrc
+.prettierignore
+.github/
+CODE_OF_CONDUCT.md
+CONTRIBUTING.md
+pnpm-lock.yaml
+tsconfig*
+src/
+scripts/
+node_modules/
