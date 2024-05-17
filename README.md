@@ -167,6 +167,9 @@ For example:
 const { a, b } = complexState.useValueSelector(value => ({ a: value.a, b: value.b}));
 
 const valueOfB = complexState.useValueSelector(value => value.b);
+
+// Or subscribe to a new computed value
+const computedValue = complexState.useValueSelector(value => value.a * 2 + Number(value.b));
 ```
 
 Cool, huh?

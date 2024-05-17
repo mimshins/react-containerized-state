@@ -3,9 +3,11 @@ import * as React from "react";
 import type {
   CallableFunction,
   ContainerInitializer,
+  DefaultSubscribeEntry,
   EqualityCheckFunction,
   SelectedSubscribeEntry,
   SubscribeCallback,
+  SubscribeEntry,
   Unsubscribe,
   ValueSelector,
 } from "./types";
@@ -17,10 +19,7 @@ import {
 
 class Container<T> {
   private _value: T;
-  private _subscribers: Set<
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    SubscribeCallback<T> | SelectedSubscribeEntry<T, any>
-  >;
+  private _subscribers: Set<SubscribeEntry<T>>;
 
   constructor(initializer: ContainerInitializer<T>) {
     const initialValue =
@@ -37,10 +36,15 @@ class Container<T> {
    * and returns the unsubscribe function.
    */
   public subscribe(subscribeCallback: SubscribeCallback<T>): Unsubscribe {
-    this._subscribers.add(subscribeCallback);
+    const entry: DefaultSubscribeEntry<T> = {
+      type: "default",
+      subscribeCallback,
+    };
+
+    this._subscribers.add(entry);
 
     const unsubscribe: Unsubscribe = () => {
-      this._subscribers.delete(subscribeCallback);
+      this._subscribers.delete(entry);
     };
 
     return unsubscribe;
@@ -61,7 +65,7 @@ class Container<T> {
     isEqual?: EqualityCheckFunction<P>,
   ): Unsubscribe {
     const entry: SelectedSubscribeEntry<T, P> = {
-      type: "SELECTED_SUBSCRIBE_ENTRY",
+      type: "selected",
       selector,
       subscribeCallback,
       isEqual,
@@ -95,9 +99,11 @@ class Container<T> {
     this._value = newValue;
 
     this._subscribers.forEach(entry => {
-      if ("type" in entry) {
-        if (entry.type !== "SELECTED_SUBSCRIBE_ENTRY") return;
+      if (entry.type === "default") {
+        if (Object.is(prevValue, newValue)) return;
 
+        entry.subscribeCallback(newValue);
+      } else if (entry.type === "selected") {
         const { selector, subscribeCallback, isEqual } = entry;
 
         const selectedValue = selector(newValue) as unknown;
@@ -111,10 +117,6 @@ class Container<T> {
         if (!shouldEmit) return;
 
         subscribeCallback(selectedValue);
-      } else {
-        if (Object.is(prevValue, newValue)) return;
-
-        entry(newValue);
       }
     });
   }
