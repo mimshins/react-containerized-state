@@ -4,6 +4,11 @@ Fast and minimal state container which can be used and shared across React or no
 
 Using it with React components is objectively better than built-in `useState` React hook due to the removal of unnecessary renders and the shareability of the states. It is optimized in a way that only the components that need the container's value (via `useValue()` hook) or the selected values (via `useValueSelector()` hook) are rendered upon state change.
 
+[![license](https://img.shields.io/github/license/mimshins/react-containerized-state?color=010409&style=for-the-badge)](https://github.com/mimshins/react-containerized-state/blob/main/LICENSE)
+[![npm latest package](https://img.shields.io/npm/v/react-containerized-state?color=010409&style=for-the-badge)](https://www.npmjs.com/package/react-containerized-state)
+[![npm downloads](https://img.shields.io/npm/dt/react-containerized-state?color=010409&style=for-the-badge)](https://www.npmjs.com/package/react-containerized-state)
+[![npm bundle size](https://img.shields.io/bundlephobia/minzip/react-containerized-state?color=010409&style=for-the-badge)](https://bundlephobia.com/package/react-containerized-state)
+
 
 ## Installation
 
