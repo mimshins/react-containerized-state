@@ -2,7 +2,7 @@
 
 Fast and minimal state container which can be used and shared across React or non-React components.
 
-Using it with React components is objectively better than built-in `useState` React hook due to the removal of unnecessary renders. It is optimized in a way that only the components that need the container's value (via `useValue()` hook) are rendered upon state change.
+Using it with React components is objectively better than built-in `useState` React hook due to the removal of unnecessary renders and the shareability of the states. It is optimized in a way that only the components that need the container's value (via `useValue()` hook) or the selected values (via `useValueSelector()` hook) are rendered upon state change.
 
 
 ## Installation
