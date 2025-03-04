@@ -1,10 +1,14 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
+    "target": "ES2018",
+    "outDir": "dist",
     "noEmit": false,
     "jsx": "react-jsx",
-    "declaration": true
+    "declaration": true,
+    "incremental": true,
+    "noEmitOnError": true
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "include": ["src"],
   "exclude": ["**/*.test.ts", "**/*.test.tsx"]
 }

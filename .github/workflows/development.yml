@@ -10,20 +10,38 @@ on:
   workflow_call:
 
 jobs:
-  lint:
-    name: Code standards
+  test:
+    name: Run unit tests
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    env:
-      COREPACK_ENABLE_STRICT: 0
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: "🔧 setup pnpm"
+        uses: pnpm/action-setup@v4
+
+      - name: "🔧 setup node"
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "pnpm"
+
+      - name: "📦 install dependencies"
+        run: pnpm install
+
+      - name: "🔍 run tests"
+        run: pnpm test
+
+  lint:
+    name: Run linter
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: "☁️ checkout repository"
         uses: actions/checkout@v4
 
       - name: "🔧 setup pnpm"
-        uses: pnpm/action-setup@v3
-        with:
-          version: 9
+        uses: pnpm/action-setup@v4
 
       - name: "🔧 setup node"
         uses: actions/setup-node@v4
