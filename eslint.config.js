@@ -1,25 +1,33 @@
 import jsLint from "@eslint/js";
+import vitestPlugin from "@vitest/eslint-plugin";
 import commentsPlugin from "eslint-plugin-eslint-comments";
 import importPlugin from "eslint-plugin-import";
-import jestPlugin from "eslint-plugin-jest";
 import prettierRecommendedConfig from "eslint-plugin-prettier/recommended";
+import react from "eslint-plugin-react";
+import reactHooks from "eslint-plugin-react-hooks";
+import reactRefresh from "eslint-plugin-react-refresh";
 import { config, configs as tsLintConfigs } from "typescript-eslint";
 
 export default config(
   jsLint.configs.recommended,
   ...tsLintConfigs.recommendedTypeChecked,
+  /* eslint-disable @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access */
   importPlugin.flatConfigs.recommended,
   importPlugin.flatConfigs.typescript,
+  /* eslint-enable @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access */
   prettierRecommendedConfig,
   {
-    files: ["*.ts"],
+    files: ["*.ts", "*.tsx"],
+  },
+  {
+    ignores: ["**/dist/"],
   },
   {
     languageOptions: {
       parserOptions: {
-        tsconfigRootDir: import.meta.dirname,
         project: true,
         projectService: {
+          allowDefaultProject: ["eslint.config.js"],
           defaultProject: "./tsconfig.json",
         },
         sourceType: "module",
@@ -28,16 +36,29 @@ export default config(
   },
   {
     files: ["**/__tests__/**/*.[jt]s?(x)", "**/?(*.)+(spec|test).[jt]s?(x)"],
-    extends: [jestPlugin.configs["flat/recommended"]],
+    plugins: {
+      "@vitest": vitestPlugin,
+    },
     rules: {
-      "jest/prefer-importing-jest-globals": "error",
+      ...vitestPlugin.configs["legacy-recommended"].rules,
     },
   },
   {
     plugins: {
+      react,
       "eslint-comments": commentsPlugin,
+      "react-hooks": reactHooks,
+      "react-refresh": reactRefresh,
     },
     rules: {
+      ...react.configs.recommended.rules,
+      ...reactHooks.configs.recommended.rules,
+      "react-refresh/only-export-components": [
+        "warn",
+        { allowConstantExport: true },
+      ],
+      "react/prop-types": "off",
+      "react/react-in-jsx-scope": "off",
       "eslint-comments/disable-enable-pair": "error",
       "eslint-comments/no-aggregating-enable": "error",
       "eslint-comments/no-duplicate-disable": "error",
@@ -127,15 +148,14 @@ export default config(
       ],
     },
     settings: {
+      react: {
+        version: "detect",
+      },
       "import/resolver": {
         typescript: {
           project: "tsconfig.json",
         },
       },
     },
-  },
-  {
-    files: ["*.js", "*.mjs"],
-    ...tsLintConfigs.disableTypeChecked,
   },
 );
