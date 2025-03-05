@@ -4,11 +4,10 @@
     "target": "ES2018",
     "outDir": "dist",
     "noEmit": false,
-    "jsx": "react-jsx",
     "declaration": true,
     "incremental": true,
     "noEmitOnError": true
   },
   "include": ["src"],
-  "exclude": ["**/*.test.ts", "**/*.test.tsx"]
+  "exclude": ["**/*.test.ts", "**/*.test.tsx", "**/__tests__"]
 }
