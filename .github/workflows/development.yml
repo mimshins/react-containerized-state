@@ -30,7 +30,7 @@ jobs:
         run: pnpm install
 
       - name: "🔍 run tests"
-        run: pnpm test
+        run: pnpm coverage
 
   lint:
     name: Run linter
