@@ -12,7 +12,8 @@
     "build": "run-p build:*",
     "lint:ts": "tsc --project tsconfig.json",
     "lint:ecma": "eslint --fix",
-    "lint": "run-p lint:*"
+    "lint": "run-p lint:*",
+    "release": "pnpm publish . --tag latest --access public --no-git-checks"
   },
   "engines": {
     "node": ">=20"
