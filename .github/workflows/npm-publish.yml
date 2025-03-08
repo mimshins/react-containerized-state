@@ -7,16 +7,14 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      COREPACK_ENABLE_STRICT: 0
     steps:
       - uses: actions/checkout@v4
 
-      - uses: pnpm/action-setup@v3
-        with:
-          version: 9
+      - name: "🔧 setup pnpm"
+        uses: pnpm/action-setup@v4
 
-      - uses: actions/setup-node@v4
+      - name: "🔧 setup node"
+        uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: "pnpm"
@@ -36,16 +34,14 @@ jobs:
   publish-npm:
     needs: build
     runs-on: ubuntu-latest
-    env:
-      COREPACK_ENABLE_STRICT: 0
     steps:
       - uses: actions/checkout@v4
 
-      - uses: pnpm/action-setup@v3
-        with:
-          version: 9
+      - name: "🔧 setup pnpm"
+        uses: pnpm/action-setup@v4
 
-      - uses: actions/setup-node@v4
+      - name: "🔧 setup node"
+        uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: "pnpm"
@@ -61,6 +57,6 @@ jobs:
           path: dist
 
       - name: "🚀 publish package"
-        run: npx tsx ./scripts/ci/publish-package.ts
+        run: pnpm release
         env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+          NPM_AUTH_TOKEN: ${{secrets.NPM_AUTH_TOKEN}}

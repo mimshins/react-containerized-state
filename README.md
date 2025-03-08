@@ -1,8 +1,8 @@
 # react-containerized-state
 
-Fast and minimal state container which can be used and shared across React or non-React components.
+A set of React hooks designed to seamlessly integrate the `containerized-state` package into your React project.
 
-Using it with React components is objectively better than built-in `useState` React hook due to the removal of unnecessary renders and the shareability of the states. It is optimized in a way that only the components that need the container's value (via `useValue()` hook) or the selected values (via `useValueSelector()` hook) are rendered upon state change.
+Utilizing these hooks with React components offers significant advantages over the built-in `useState` hook by eliminating unnecessary re-renders and enhancing state shareability. They are optimized to ensure that only the components requiring the container's value (via the `useValue`() hook) or the selected/computed values (via the `useComputedValue`() hook) are re-rendered upon state changes.
 
 [![license](https://img.shields.io/github/license/mimshins/react-containerized-state?color=010409&style=for-the-badge)](https://github.com/mimshins/react-containerized-state/blob/main/LICENSE)
 [![npm latest package](https://img.shields.io/npm/v/react-containerized-state?color=010409&style=for-the-badge)](https://www.npmjs.com/package/react-containerized-state)
@@ -15,7 +15,7 @@ Using it with React components is objectively better than built-in `useState` Re
 To install the package, run:
 
 ```bash
-npm install react-containerized-state
+npm install containerized-state react-containerized-state
 # Or via any other package manager
 ```
 
@@ -24,13 +24,14 @@ npm install react-containerized-state
 Consider the following example:
 
 ```tsx
-import { createStateContainer } from "react-containerized-state";
+import { StateContainer } from "containerized-state";
+import { useValue, useUpdate } from "react-containerized-state";
 
 // You can move this container to a separate module and share it across your app
-const counter = createStateContainer(0);
+const counter = new StateContainer(0);
 
 const Controls = () => {
-  const updateCount = counter.useUpdateValue();
+  const updateCount = useUpdate(counter);
 
   const increase = (n: number) => {
     updateCount(c => c + n);
@@ -46,7 +47,7 @@ const Controls = () => {
 };
 
 const Display = () => {
-  const count = counter.useValue();
+  const count = useValue(counter);
 
   return <div>Count: {count}</div>;
 };
@@ -72,35 +73,36 @@ const Page = () => {
 export default Page;
 ```
 
-In this example, when the user clicks on the buttons of the `Controls` component, the state changes and each component that is subscribed to the container via `useValue` hook will be notified and re-rendered as a result. In other words, only the `Display` component re-renders on state change.
+In this example, when the user clicks on the buttons of the `Controls` component, the state changes, and each component subscribed to the container via the `useValue` hook will be notified and re-rendered accordingly. Specifically, only the `Display` component will re-render on state change.
 
-You can also use this container with non-React components as well. For example we can add this line to the example above outside of any React component:
+You can also use this container with non-React components. For instance, you can add the following line to the example above, outside of any React component:
 
 ```ts
 // Logs the new value on state change
 counter.subscribe(console.log); 
 
 setTimeout(() => {
-  counter.updateValue(100);
+  counter.setValue(100);
 }, 2000);
 ```
 
-This way, after 2 seconds the value of `counter` container updates to `100` resulting a state dispatch which calls all the subscribers of the container (including those in the React components).
+This way, after 2 seconds, the value of the counter container updates to `100`, resulting in a state dispatch that notifies all subscribers of the container (including those in the React components).
 
-## Usage with selectors
+## Usage with selectors (computed values)
 
-There may be situations where you have to store a complex state in your container (**It is recommended to have different small containers instead of several large ones**). In these cases, you may not want to subscribe to all the fields of the complex state. Instead you want to subscribe to different parts in different components or modules.
+In certain situations, you may need to store a complex state in your container. **It is recommended to use multiple small containers instead of a few large ones**. In these cases, you may not want to subscribe to all fields of the complex state. Instead, you might want to subscribe to different parts in different components or modules.
 
 Consider the following example:
 
 ```tsx
-import { createStateContainer } from "react-containerized-state";
+import { StateContainer } from "containerized-state";
+import { useUpdate, useComputedValue } from "react-containerized-state";
 
 // You can move this container to a separate module and share it across your app
-const complexState = createStateContainer({ a: 1, b: "2" });
+const complexState = new StateContainer({ a: 1, b: "2" });
 
 const Controls = () => {
-  const updateState = complexState.useUpdateValue();
+  const updateState = useUpdate(complexState);
 
   return (
     <div>
@@ -129,13 +131,13 @@ const Controls = () => {
 };
 
 const DisplayA = () => {
-  const a = complexState.useValueSelector(value => value.a);
+  const a = useComputedValue(complexState, value => value.a);
 
   return <div>State.A: {a}</div>;
 };
 
 const DisplayB = () => {
-  const b = complexState.useValueSelector(value => value.b);
+  const b = useComputedValue(complexState, value => value.b);
 
   return <div>State.B: {b}</div>;
 };
@@ -162,103 +164,75 @@ const Page = () => {
 export default Page;
 ```
 
-In this example, when the user clicks on the buttons of the `Controls` component, the state changes and each component that is subscribed to a part of the container's state via `useValueSelector` hook will be notified and re-rendered as a result. In other words, `DisplayA` component re-renders only when `value.a` changes (same thing for the `DisplayB` component and the value of `value.b` state.).
+In this example, when the user clicks the buttons in the `Controls` component, the state changes, and each component subscribed to a part of the container's state via the `useComputedValue` hook will be notified and re-rendered accordingly. Specifically, the DisplayA component re-renders only when `value.a` changes, and the DisplayB component re-renders only when `value.b` changes.
 
-You can pass in any selector you want. Think of selectors as a state transformer where you can transform a complex state into another simpler shape.
+You can pass in any selector you want. Think of selectors as state transformers, allowing you to convert a complex state into a simpler, more manageable shape.
 
 For example:
 
 ```tsx
-const { a, b } = complexState.useValueSelector(value => ({ a: value.a, b: value.b}));
+const { a, b } = useComputedValue(complexState, value => ({ a: value.a, b: value.b}));
 
-const valueOfB = complexState.useValueSelector(value => value.b);
+const valueOfB = seComputedValue(complexState, value => value.b);
 
 // Or subscribe to a new computed value
-const computedValue = complexState.useValueSelector(value => value.a * 2 + Number(value.b));
+const computedValue = useComputedValue(complexState, value => value.a * 2 + Number(value.b));
 ```
 
 Cool, huh?
 
 So, what about using the complex state in a non-React environment?
-You can opt-in `selectedSubscribe` instead of `subscribe`.
+You can opt for `computedSubscribe` instead of `subscribe`.
 
 For example:
 
 ```ts
 // Logs the new value of `value.a` on selected state changes
-complexState.selectedSubscribe(value => value.a, console.log);
+complexState.computedSubscribe(value => value.a, console.log);
 ```
 
 ## More control of re-rendering and emission changes?
 
-For more control over re-rendering (in React environment) and emission changes (in non-React environment) try to pass in `isEqual` parameter to the `useValueSelector` and `selectedSubscribe` (check the API section for more information).
+For more control over re-rendering (in a React environment) and emission changes (in a non-React environment), try passing the `isEqual` parameter to `useComputedValue` and `computedSubscribe`.
 
 > By default, we are using `Object.is` as equality check function.
 
 ## API
 
-### `createStateContainer`:
+For more information on container APIs and how to use them, check out [containerized-state's documentation](https://github.com/mimshins/containerized-state).
+
+### `useValue`
 
 ```ts
-declare const createStateContainer: <T>(initializer: T | (() => T)) => {
-  /**
-   * Subscribes to the changes of the container's state value
-   * and returns the unsubscribe function.
-   */
-  subscribe(subscribeCallback: (value: T) => void): () => void;
-  /**
-   * Subscribes to the changes of the container's selected state values
-   * and returns the unsubscribe function.
-   *
-   * For more control over emission changes, you may provide a custom equality function.
-   */
-  selectedSubscribe<P>(
-    selector: (value: T) => P,
-    subscribeCallback: (value: P) => void,
-    /**
-     * A custom equality function to control emission changes.
-     */
-    isEqual?: (a: P, b: P) => boolean,
-  ): () => void;
-  /**
-   * Gets the value of the state.
-   *
-   * Please note that this function is not reactive!
-   * Avoid using this in the React's rendering phase.
-   */
-  getValue(): T;
-  /**
-   * Updates the value of the state and notifies the subscribers.
-   */
-  updateValue(newValue: T): void;
-  /**
-   * A React hook to read the value of the state.
-   *
-   * This is a reactive function and updates on state value change.
-   */
-  useValue(): T;
-  /**
-   * A React hook to read the values of the selected states.
-   *
-   * This is a reactive function and updates on selected state values change.
-   *
-   * For more control over re-rendering, you may provide a custom equality function.
-   */
-  useValueSelector(
-    selector: (value: T) => P,
-    /**
-     * A custom equality function to control re-rendering.
-     */
-    isEqual?: (a: P, b: P) => boolean,
-  ): P;
-  /**
-   * A React hook to update the value of the state and notify the subscribers.
-   */
-  useUpdateValue(): React.Dispatch<React.SetStateAction<T>>;
-};
+declare const useValue: <T>(container: Container<T>) => T;
 ```
 
-A function that creates a container for the state to live in. This function needs the initial value of the state you are containerizing. You can provide a `initializer` parameter (which is either an initial value or a function returns the initial value) to initialize the state value.
+Custom hook that subscribes to a container and retrieves its current value.
+
+### `useComputedValue`
+
+```ts
+type ComputeValue<T, P> = (value: T) => P;
+type EqualityCheckFunction<P> = (prev: P, next: P) => boolean;
+
+declare const useComputedValue: <T, P>(
+  container: Container<T>,
+  compute: ComputeValue<T, P>,
+  isEqual?: EqualityCheckFunction<P>,
+) => P;
+```
+
+Custom hook that subscribes to a container and computes a derived value.
+
+### `useUpdate`
+
+```ts
+type Updater<T> = (state: SetStateAction<T>) => void | Promise<void>;
+
+declare const useUpdate: <T>(container: Container<T>) => Updater<T>;
+```
+
+Custom hook that provides an updater function to set the value of a container.
 
 ## Contributing
 
