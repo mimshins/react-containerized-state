@@ -10,8 +10,9 @@ const config = defineConfig({
     include: ["**/__tests__/**/*.[jt]s?(x)", "**/?(*.)+(spec|test).[jt]s?(x)"],
     exclude: [...configDefaults.exclude, "**/__tests__/utils"],
     coverage: {
+      enabled: true,
       provider: "v8",
-      reporter: ["text", "clover", "json-summary", "html"],
+      reporter: ["text-summary", "json-summary", "html"],
       include: ["src/**"],
       exclude: [...(configDefaults.coverage.exclude ?? []), "src/types.ts"],
       thresholds: {
