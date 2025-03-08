@@ -1,7 +1,7 @@
 import { act, render, renderHook, screen } from "@testing-library/react";
 import { AsyncStateContainer, StateContainer } from "containerized-state";
 import { describe, expect, it, vitest } from "vitest";
-import { useUpdate, useValue } from "../index.ts";
+import { useUpdate, useValue } from "../src/index.ts";
 import createPromiseResolvers from "./utils/create-promise-resolvers.ts";
 
 describe("use-value", () => {
