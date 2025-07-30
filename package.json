@@ -10,9 +10,11 @@
     "build:cjs": "tsc --project ./tsconfig.cjs.json",
     "build:esm": "tsc --project ./tsconfig.esm.json",
     "build": "run-p build:*",
+    "format:check": "prettier . --check --cache",
+    "format:write": "prettier . --write --cache",
     "lint:ts": "tsc --project tsconfig.json",
-    "lint:ecma": "eslint --fix",
-    "lint": "run-p lint:*",
+    "lint:ecma": "eslint --color --cache --config eslint.config.js --cache-location .eslintcache",
+    "lint": "run-p --race lint:* format:check",
     "release": "pnpm publish . --tag latest --access public --no-git-checks"
   },
   "engines": {
